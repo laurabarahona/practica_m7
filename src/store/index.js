@@ -13,7 +13,14 @@ export default new Vuex.Store({
   mutations: {
     SET_CURSOS(state, cursos) {
       state.cursos = cursos;  
-    }
+    },
+    ACTUALIZAR_CURSO(state, cursoEditado) {
+      const index = state.cursos.findIndex(curso => curso.id === cursoEditado.id);
+      if (index !== -1) {
+        // Actualizar el curso en el array de cursos
+        Vue.set(state.cursos, index, cursoEditado);
+      }
+    },
   },
   actions: {
     async fetchCursos({ commit }) {
@@ -28,7 +35,11 @@ export default new Vuex.Store({
       } catch (error) {
         console.error('Hubo un problema al obtener los datos:', error);
       }
-    }
+    },
+    editarCurso({ commit }, cursoEditado) {
+      // Aquí puedes realizar cualquier acción adicional, como enviar datos a un servidor
+      commit('ACTUALIZAR_CURSO', cursoEditado);
+    },
   },
   modules: {
   }
