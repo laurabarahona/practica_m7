@@ -72,6 +72,7 @@
       required
     ></v-textarea>
 
+    <router-link :to="{ name: 'home' }">
     <v-btn
       color="error"
       class="mr-4"
@@ -79,13 +80,16 @@
     >
       Editar
     </v-btn>
+    </router-link>
 
-    <v-btn
-      color="warning"
-      @click="resetValidation"
-    >
-      Cerrar
-    </v-btn>
+    <router-link :to="{ name: 'admin' }">
+      <v-btn
+        color="warning"
+        @click="resetValidation"
+      >
+        Cerrar
+      </v-btn>
+    </router-link>
   </v-form>
 </template>
 
