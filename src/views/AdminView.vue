@@ -1,39 +1,20 @@
 <template>
-    <v-simple-table>
+  <v-simple-table>
     <template v-slot:default>
       <thead>
         <tr>
-          <th class="text-left">
-            Curso
-          </th>
-          <th class="text-left">
-            Cupos
-          </th>
-          <th class="text-left">
-            Inscritos
-          </th>
-          <th class="text-left">
-            Duración
-          </th>
-          <th class="text-left">
-            Costo
-          </th>
-          <th class="text-left">
-            Terminado
-          </th>
-          <th class="text-left">
-            Fecha
-          </th>
-          <th class="text-left">
-            Acciones
-          </th>
+          <th class="text-left">Curso</th>
+          <th class="text-left">Cupos</th>
+          <th class="text-left">Inscritos</th>
+          <th class="text-left">Duración</th>
+          <th class="text-left">Costo</th>
+          <th class="text-left">Terminado</th>
+          <th class="text-left">Fecha</th>
+          <th class="text-left">Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="curso in allCursos"
-          :key="curso.id"
-        >
+        <tr v-for="curso in allCursos" :key="curso.id">
           <td>{{ curso.nombre }}</td>
           <td>{{ curso.cupos }}</td>
           <td>{{ curso.inscritos }}</td>
@@ -42,7 +23,9 @@
           <td>{{ curso.completado ? 'Sí' : 'No' }}</td>
           <td>{{ curso.fecha_registro }}</td>
           <td>
-            <v-icon color="orange" class="mr-2">mdi-pencil</v-icon>
+            <router-link :to="{ name:'edit', params: { id:curso.id } }">
+              <v-icon color="orange" class="mr-2">mdi-pencil</v-icon>
+            </router-link>
             <v-icon color="red">mdi-delete</v-icon>
           </td>   
         </tr>
@@ -55,7 +38,7 @@
 import { mapActions, mapGetters } from 'vuex';
 export default {
     name: 'admin-view',
-    // props: {},
+    //props: {}
     data: function(){
         return {}
     },
@@ -70,9 +53,11 @@ export default {
     // mixins: [],
     // filters: {},
     // -- Lifecycle Methods
-    mounted() {
-    this.fetchCursos();
-    },
+  //   mounted() {
+  //   if (this.allCursos.length === 0) {
+  //     this.fetchCursos();  // Solo llama a fetchCursos si los cursos aún no están cargados
+  //   }
+  // }
     // -- End Lifecycle Methods
 }
 </script>

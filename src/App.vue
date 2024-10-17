@@ -44,12 +44,17 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 
 export default {
   name: 'App',
-
-  data: () => ({
-    //
-  }),
-};
+  methods: {
+    ...mapActions(['fetchCursos']),
+  },
+  created() {
+    if (this.$store.state.cursos.length === 0) {
+      this.fetchCursos();  // se cargan lso cursos al inicio
+    }
+  }
+}
 </script>

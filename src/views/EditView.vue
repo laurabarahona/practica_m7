@@ -12,13 +12,14 @@
       required
     ></v-text-field>
 
-    <v-file-input
+    <v-text-field
       v-model="cursoSeleccionado.img"
       label="URL de la imagen"
-      accept="image/*"
       required
-    ></v-file-input>
+      readonly
+    ></v-text-field>
 
+    
     <v-text-field
       v-model="cursoSeleccionado.cupos"
       :rules="cuposRules"
@@ -72,7 +73,7 @@
       required
     ></v-textarea>
 
-    <router-link :to="{ name: 'home' }">
+    <router-link :to="{ name:'home' }">
     <v-btn
       color="error"
       class="mr-4"
@@ -81,43 +82,62 @@
       Editar
     </v-btn>
     </router-link>
+   
 
-    <router-link :to="{ name: 'admin' }">
       <v-btn
         color="warning"
-        @click="resetValidation"
       >
         Cerrar
       </v-btn>
-    </router-link>
+
   </v-form>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 export default {
     name: 'edit-view',
     // props: {},
     data: function(){
         return {
+          valid: false, // Define la propiedad 'valid' para la validación del formulario
+          // Reglas de validación para los campos
+          nombreRules: [(v) => !!v || 'El nombre es requerido'],
+          cuposRules: [(v) => !!v || 'Los cupos son requeridos'],
+          inscritosRules: [(v) => !!v || 'Los inscritos son requeridos'],
+          duracionRules: [(v) => !!v || 'La duración es requerida'],
+          fechaRules: [(v) => !!v || 'La fecha es requerida'],
+          completadoRules: [(v) => !!v || 'El estado es requerido'],
+          costoRules: [(v) => !!v || 'El costo es requerido']
         }
     },
     computed: {
-        ...mapGetters(['allCursos']),
-        cursoSeleccionado() {
-            const id = this.$route.params.id; // Obtener el id de la URL
-            return this.allCursos.find(curso => curso.id === parseInt(id)) || {};
-        },
+      ...mapGetters(['allCursos']),
+      cursoSeleccionado() {
+        const id = this.$route.params.id;  // Obtener el id de la URL
+        return this.allCursos.find(curso => curso.id === parseInt(id));  // Buscar solo el curso que coincida con el id
+      }
     },
-    //methods: {}
+    methods: {
+      ...mapActions(['modificarCurso']),
+      editarCurso() {
+        // Verificar si cursoSeleccionado tiene los valores correctos antes de enviar
+        console.log('Curso actualizado:', this.cursoSeleccionado);
+        // Enviar los datos del curso actualizado al store
+        this.modificarCurso(this.cursoSeleccionado);
+      },
+      resetValidation() {
+        this.$refs.form.resetValidation();
+      }
+    },
     // watch: {},
     // components: {},
     // mixins: [],
     // filters: {},
     // -- Lifecycle Methods
-    created() {
-        this.$store.dispatch('fetchCursos');
-    }
+    // created() {
+    //     this.$store.dispatch('fetchCursos');
+    // }
     // -- End Lifecycle Methods
 }
 </script>
