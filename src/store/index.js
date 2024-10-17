@@ -19,7 +19,10 @@ export default new Vuex.Store({
       if (index !== -1) {
         Vue.set(state.cursos, index, cursoActualizado); 
       }
-    }
+    },
+    ADD_CURSO(state, nuevoCurso) {
+      state.cursos.push(nuevoCurso);  // Agregar el nuevo curso al estado
+    },
   },
   actions: {
     async fetchCursos({ commit }) {
@@ -38,6 +41,12 @@ export default new Vuex.Store({
     // Acción para despachar la mutación de actualizar un curso
     modificarCurso({ commit }, cursoActualizado) {
       commit('UPDATE_CURSO', cursoActualizado);
+    },
+    agregarCurso({ commit, state }, nuevoCurso) {
+      // Generar un nuevo id basado en el número de cursos existentes
+      const newId = state.cursos.length ? state.cursos[state.cursos.length - 1].id + 1 : 1;
+      const cursoConId = { ...nuevoCurso, id: newId };  // Asigna el nuevo id
+      commit('ADD_CURSO', cursoConId);
     }
   },
   modules: {}
