@@ -76,7 +76,7 @@
     <v-btn
       color="error"
       class="mr-4"
-      @click="reset"
+      @click="editarCurso"
     >
       Editar
     </v-btn>

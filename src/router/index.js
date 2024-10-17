@@ -18,7 +18,7 @@ const routes = [
     component: AdminView
   },
   {
-    path: '/administracion/editar/:id',
+    path: '/editar/:id',
     name: 'edit',
     component: EditView,
     props: true
