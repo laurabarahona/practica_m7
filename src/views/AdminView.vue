@@ -33,12 +33,32 @@
                 <router-link :to="{ name:'edit', params: { id:curso.id } }">
                   <v-icon color="orange" class="mr-2">mdi-pencil</v-icon>
                 </router-link>
-                <v-icon color="red">mdi-delete</v-icon>
+                <v-icon color="red" @click="confirmarEliminar(curso.id)">mdi-delete</v-icon>
               </td>   
             </tr>
           </tbody>
         </template>
       </v-simple-table>
+      <!-- Dialogo de confirmación para eliminar curso -->
+      <v-dialog v-model="dialogConfirmDelete" max-width="600">
+        <v-card max-height="600px">
+          <v-card-title class="d-flex justify-center">
+            <span class="text-h6">¿Estás seguro de que deseas eliminar este curso?</span>
+          </v-card-title>
+          
+          <v-card-actions class="d-flex justify-center"> <!-- Centra los botones -->
+            <!-- Botón Cancelar (Verde) -->
+            <v-btn color="green darken-1" class="white--text" @click="cancelarEliminar">
+              Cancelar
+            </v-btn>
+
+            <!-- Botón Eliminar (Rojo) -->
+            <v-btn color="red darken-1" class="white--text mb-6 mt-6"  @click="eliminarCursoConfirmado">
+              Eliminar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     <!-- Modal para agregar un curso -->
     <v-dialog v-model="dialog" max-width="600px">
       <v-card>
@@ -111,45 +131,52 @@
             <v-textarea
               v-model="nuevoCurso.descripcion"
               label="Descripción del curso"
-              rows="5"
+              rows="3"
               outlined
               required
             ></v-textarea>
           </v-form>
         </v-card-text>
 
-        <v-card-actions>
+        <v-card-actions class="d-flex justify-center">
           <!-- Botón verde "Agregar" -->
-          <v-btn color="green darken-1" class="white--text" @click="agregarCurso">
+          <v-btn color="green darken-1" class="white--text mb-6" @click="agregarCurso">
             Agregar
           </v-btn>
 
           <!-- Botón naranjo "Limpiar formulario" -->
-          <v-btn color="orange darken-1" class="white--text" @click="resetFormulario">
+          <v-btn color="orange darken-1" class="white--text mb-6" @click="resetFormulario">
             Limpiar formulario
           </v-btn>
 
           <!-- Botón rojo "Cancelar" -->
-          <v-btn color="red" class="white--text" @click="cerrarModal">
+          <v-btn color="red" class="white--text mb-6" @click="cerrarModal">
             Cancelar
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </v-container>
+  <Data></Data>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import Data from '@/components/Data.vue';
 import moment from 'moment';
 export default {
     name: 'admin-view',
     //props: {}
+    components: {
+      Data
+    },
     data() {
     return {
       dialog: false,  // Controla si el modal está abierto o cerrado
       valid: false,   // Controla la validación del formulario
+      dialogConfirmDelete: false,  // Controla el diálogo de confirmación
+      cursoIdParaEliminar: null,
       // Reglas de validación para los campos
       nombreRules: [(v) => !!v || 'El nombre es requerido', (v) => v.length <= 40 || 'Máximo 40 caracteres'],
       cuposRules: [(v) => !!v || 'Los cupos son requeridos'],
@@ -177,7 +204,7 @@ export default {
         ...mapGetters(['allCursos'])
   },
   methods: {
-    ...mapActions(['agregarCurso']),
+    ...mapActions(['agregarCurso', 'eliminarCurso']),
     
     abrirModal() {
       this.dialog = true;
@@ -208,8 +235,16 @@ export default {
     
     agregarCurso() {
       if (this.$refs.form.validate()) {
+        // Convertir cupos, inscritos y costo a números antes de enviarlos a Vuex
+        const curso = {
+          ...this.nuevoCurso,
+          cupos: Number(this.nuevoCurso.cupos),
+          inscritos: Number(this.nuevoCurso.inscritos),
+          costo: Number(this.nuevoCurso.costo),
+          completado: Boolean(this.nuevoCurso.completado)  // Asegurarse de que 'completado' sea booleano
+        };
         // Llama a la acción de Vuex para agregar el curso
-        this.$store.dispatch('agregarCurso', this.nuevoCurso);
+        this.$store.dispatch('agregarCurso', curso);
         this.cerrarModal();  // Cierra el modal después de agregar
       }
     },
@@ -223,7 +258,29 @@ export default {
         return 'Fecha inválida';  // Si no es válida, devuelve un mensaje o valor predeterminado
       }
     },
-  }
+
+    confirmarEliminar(cursoId) {
+      this.cursoIdParaEliminar = cursoId;
+      this.dialogConfirmDelete = true;  // Abre el diálogo de confirmación
+    },
+    
+    cancelarEliminar() {
+      this.dialogConfirmDelete = false;  // Cierra el diálogo sin eliminar
+    },
+
+    eliminarCursoConfirmado() {
+      this.$store.dispatch('eliminarCurso', this.cursoIdParaEliminar);  // Corregido para usar dispatch
+      this.dialogConfirmDelete = false;  // Cierra el diálogo después de eliminar
+    }
+  },
+    // watch: {},
+    // mixins: [],
+    // filters: {},
+    // -- Lifecycle Methods
+    // created() {
+    //     this.$store.dispatch('fetchCursos');
+    // }
+    // -- End Lifecycle Methods
 };
 </script>
 

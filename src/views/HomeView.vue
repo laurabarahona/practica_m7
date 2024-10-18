@@ -29,7 +29,6 @@ export default {
     ...mapActions(['fetchCursos']),
   },
    // watch: {},
-    // components: {},
     // mixins: [],
     // filters: {},
     // -- Lifecycle Methods
