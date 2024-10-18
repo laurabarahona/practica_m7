@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import moment from 'moment'  // Importa moment.js para el formateo de fechas
 
 Vue.use(Vuex)
 
@@ -45,7 +46,15 @@ export default new Vuex.Store({
     agregarCurso({ commit, state }, nuevoCurso) {
       // Generar un nuevo id basado en el número de cursos existentes
       const newId = state.cursos.length ? state.cursos[state.cursos.length - 1].id + 1 : 1;
-      const cursoConId = { ...nuevoCurso, id: newId };  // Asigna el nuevo id
+
+      // Formatear la fecha de registro usando moment.js
+      const cursoConId = { 
+        ...nuevoCurso, 
+        id: newId, 
+        fecha_registro: moment(nuevoCurso.fecha_registro, 'DD/MM/YYYY').format('DD/MM/YYYY')  // Asegurarse de que la fecha esté en formato 'DD/MM/YYYY'
+      };
+      
+      // Commit de la mutación para agregar el curso
       commit('ADD_CURSO', cursoConId);
     }
   },

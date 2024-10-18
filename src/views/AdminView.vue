@@ -142,93 +142,89 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import moment from 'moment';
 export default {
     name: 'admin-view',
     //props: {}
     data() {
-      return {
-        dialog: false, // Controla si el modal está abierto o cerrado
-        valid: false,  // Controla la validación del formulario
-        // Reglas de validación para los campos
-        nombreRules: [(v) => !!v || 'El nombre es requerido', (v) => v.length <= 40 || 'Máximo 40 caracteres'],
-        cuposRules: [(v) => !!v || 'Los cupos son requeridos'],
-        inscritosRules: [(v) => !!v || 'Los inscritos son requeridos'],
-        duracionRules: [(v) => !!v || 'La duración es requerida', (v) => v.length <= 10 || 'Máximo 10 caracteres'],
-        inscritosVsCuposRule: (v) => v <= this.nuevoCurso.cupos || 'Los inscritos no pueden superar los cupos disponibles',
-        fechaRules: [(v) => !!v || 'La fecha es requerida'],
-        completadoRules: [(v) => !!v || 'El estado es requerido'],
-        costoRules: [(v) => !!v || 'El costo es requerido'],
-        numericRule: (v) => /^\d+$/.test(v) || 'Debe ser un valor numérico',  // Solo números
-        nuevoCurso: {  // Objeto para un nuevo curso
-          nombre: '',
-          img: '',
-          cupos: '',
-          inscritos: '',
-          duracion: '',
-          fecha_registro: '',
-          completado: 'false',  // Valor por defecto "false"
-          costo: '',
-          descripcion: ''
-        }
-      };
-    },
+    return {
+      dialog: false,  // Controla si el modal está abierto o cerrado
+      valid: false,   // Controla la validación del formulario
+      // Reglas de validación para los campos
+      nombreRules: [(v) => !!v || 'El nombre es requerido', (v) => v.length <= 40 || 'Máximo 40 caracteres'],
+      cuposRules: [(v) => !!v || 'Los cupos son requeridos'],
+      inscritosRules: [(v) => !!v || 'Los inscritos son requeridos'],
+      duracionRules: [(v) => !!v || 'La duración es requerida', (v) => v.length <= 10 || 'Máximo 10 caracteres'],
+      inscritosVsCuposRule: (v) => v <= this.nuevoCurso.cupos || 'Los inscritos no pueden superar los cupos disponibles',
+      fechaRules: [(v) => !!v || 'La fecha es requerida'],
+      completadoRules: [(v) => !!v || 'El estado es requerido'],
+      costoRules: [(v) => !!v || 'El costo es requerido'],
+      numericRule: (v) => /^\d+$/.test(v) || 'Debe ser un valor numérico',
+      nuevoCurso: {  // Objeto para un nuevo curso
+        nombre: '',
+        img: '',
+        cupos: '',
+        inscritos: '',
+        duracion: '',
+        fecha_registro: '',
+        completado: 'false',  // Valor por defecto "false"
+        costo: '',
+        descripcion: ''
+      }
+    };
+  },
     computed: {
         ...mapGetters(['allCursos'])
+  },
+  methods: {
+    ...mapActions(['agregarCurso']),
+    
+    abrirModal() {
+      this.dialog = true;
+      // Usa moment.js para asignar la fecha actual formateada por defecto
+      this.nuevoCurso.fecha_registro = moment().format('DD/MM/YYYY');
+      this.nuevoCurso.completado = false;  // Estado por defecto como "false"
     },
-    methods: {
-      ...mapActions(['agregarCurso']),
-      abrirModal() {
-        this.dialog = true;  // Abre el modal
-        this.nuevoCurso.fecha_registro = this.formatDate(new Date());  // Asigna la fecha actual al abrir el modal
-        this.nuevoCurso.completado = 'false';  // Asigna el estado por defecto como 'false'
-      },
-      cerrarModal() {
-        this.dialog = false;  // Cierra el modal
-        this.resetFormulario();  // Resetea el formulario cuando se cierra
-      },
-      resetFormulario() {
-        // Limpia el formulario
-        this.nuevoCurso = {
-          nombre: '',
-          img: '',
-          cupos: '',
-          inscritos: '',
-          duracion: '',
-          fecha_registro: this.formatDate(new Date()),  // Fecha actual por defecto
-          completado: 'false',  // Estado por defecto
-          costo: '',
-          descripcion: ''
-        };
-      },
-      agregarCurso() {
-        if (this.$refs.form.validate()) {
-          // Llama a la acción de Vuex para agregar el curso
-          this.$store.dispatch('agregarCurso', this.nuevoCurso);
-          this.cerrarModal();  // Cierra el modal después de agregar
-        }
-      },
-      formatDate(date) {
-        if (!(date instanceof Date)) {
-          date = new Date(date);  // Asegura que la fecha sea una instancia válida de Date
-        }
-        const day = String(date.getDate()).padStart(2, '0');  // Agrega ceros si es necesario
-        const month = String(date.getMonth() + 1).padStart(2, '0');  // Los meses empiezan desde 0
-        const year = String(date.getFullYear()).substr(-2);  // Dos últimos dígitos del año
-        return `${day}/${month}/${year}`;
+    
+    cerrarModal() {
+      this.dialog = false;
+      this.resetFormulario();  // Resetea el formulario cuando se cierra
+    },
+    
+    resetFormulario() {
+      // Limpia el formulario y asigna la fecha actual con moment
+      this.nuevoCurso = {
+        nombre: '',
+        img: '',
+        cupos: '',
+        inscritos: '',
+        duracion: '',
+        fecha_registro: moment().format('DD/MM/YYYY'),  // Fecha actual por defecto usando moment
+        completado: false,
+        costo: '',
+        descripcion: ''
+      };
+    },
+    
+    agregarCurso() {
+      if (this.$refs.form.validate()) {
+        // Llama a la acción de Vuex para agregar el curso
+        this.$store.dispatch('agregarCurso', this.nuevoCurso);
+        this.cerrarModal();  // Cierra el modal después de agregar
       }
     },
-    // watch: {},
-    // components: {},
-    // mixins: [],
-    // filters: {},
-    // -- Lifecycle Methods
-  //   mounted() {
-  //   if (this.allCursos.length === 0) {
-  //     this.fetchCursos();  // Solo llama a fetchCursos si los cursos aún no están cargados
-  //   }
-  // }
-    // -- End Lifecycle Methods
-}
+    
+    formatDate(date) {
+      if (!date) return '';  // Si no hay fecha, devolver una cadena vacía
+      const formattedDate = moment(date, 'DD/MM/YYYY', true);  // Intentar formatear la fecha en 'DD/MM/YYYY'
+      if (formattedDate.isValid()) {
+        return formattedDate.format('DD/MM/YYYY');  // Si la fecha es válida, formatearla en el formato deseado
+      } else {
+        return 'Fecha inválida';  // Si no es válida, devuelve un mensaje o valor predeterminado
+      }
+    },
+  }
+};
 </script>
 
 <style scoped>
