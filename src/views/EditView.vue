@@ -29,10 +29,12 @@
             required
           ></v-text-field>
 
+          <!-- Campo Inscritos -->
           <v-text-field
             v-model="cursoSeleccionado.inscritos"
             :rules="inscritosRules"
             label="Inscritos del curso"
+            :disabled="cursoSeleccionado.completado === true" 
             required
           ></v-text-field>
 
@@ -52,13 +54,12 @@
             required
           ></v-text-field>
 
-          <v-text-field
+          <v-select
             v-model="cursoSeleccionado.completado"
-            :counter="10"
-            :rules="completadoRules"
+            :items="terminadoOptions"
             label="Terminado"
             required
-          ></v-text-field>
+          ></v-select>
 
           <v-text-field
             v-model="cursoSeleccionado.costo"
@@ -114,12 +115,20 @@ export default {
             (v) => /^\d+$/.test(v) || 'Debe ser un valor numérico'
           ],
           inscritosRules: [
-            (v) => v === 0 || !!v || 'Los inscritos son requeridos',  // Permitir que 0 sea válido
-            (v) => /^\d+$/.test(v) || 'Debe ser un valor numérico',
-            (v) => v <= this.cursoSeleccionado.cupos || 'Los inscritos no pueden ser mayores que los cupos'
+            (v) => /^\d+$/.test(v) || 'Debe ser un valor numérico', // Validar que sea un número
+            (v) => {
+              if (this.cursoSeleccionado.completado === true) {
+                return v === 0 || 'Si el curso está terminado, los inscritos deben ser 0';  // Si terminado, solo 0 es válido
+              } 
+              return v <= this.cursoSeleccionado.cupos || 'Los inscritos no pueden ser mayores que los cupos'; // Si no está terminado, validar según cupos
+            }
           ],
           duracionRules: [(v) => !!v || 'La duración es requerida'],
           fechaRules: [(v) => !!v || 'La fecha es requerida'],
+          terminadoOptions: [
+            { text: 'Sí', value: true },  // Opción para marcar como terminado
+            { text: 'No', value: false }  // Opción para marcar como no terminado
+          ],
           completadoRules: [(v) => !!v || 'El estado es requerido'],
           costoRules: [
             (v) => !!v || 'El costo es requerido',
@@ -136,18 +145,18 @@ export default {
     },
     methods: {
       ...mapActions(['modificarCurso']),
-      editarCurso() {
-        if (this.$refs.form.validate()) {  // Asegurarse de que el formulario sea válido antes de continuar
-          // Verificar si cursoSeleccionado tiene los valores correctos antes de enviar
-          console.log('Curso actualizado:', this.cursoSeleccionado);
-
-          // Enviar los datos del curso actualizado al store (Vuex)
-          this.modificarCurso(this.cursoSeleccionado);
-
-          // Mensaje de éxito (opcional)
-          this.$router.push({ name: 'admin' });  // Redirigir después de editar si es necesario
-        } else {
-          console.log('El formulario no es válido');
+            editarCurso() {
+        if (this.$refs.form.validate()) {
+          const cursoActualizado = {
+            ...this.cursoSeleccionado,
+            cupos: Number(this.cursoSeleccionado.cupos),
+            inscritos: Number(this.cursoSeleccionado.inscritos),
+            costo: Number(this.cursoSeleccionado.costo)
+          };
+          
+          // Enviar los datos al store
+          this.modificarCurso(cursoActualizado);
+          this.$router.push({ name: 'admin' });
         }
       },
       resetValidation() {
@@ -156,12 +165,11 @@ export default {
     },
     watch: {
       'cursoSeleccionado.completado': function(newValue) {
-        // Si el curso se marca como "terminado", establecer inscritos a 0
-        if (newValue === 'true' || newValue === true) {
-          this.cursoSeleccionado.inscritos = 0;
+        if (newValue === true) {
+          this.cursoSeleccionado.inscritos = 0;  // Si el curso está terminado, establecer inscritos a 0
         }
       }
-    },
+    }
     // components: {},
     // mixins: [],
     // filters: {},

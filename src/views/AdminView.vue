@@ -83,6 +83,7 @@
               accept="image/*"
               prepend-icon="mdi-camera"
               required
+              readonly
             ></v-file-input>
 
             <v-text-field
@@ -208,9 +209,15 @@ export default {
     
     abrirModal() {
       this.dialog = true;
-      // Usa moment.js para asignar la fecha actual formateada por defecto
-      this.nuevoCurso.fecha_registro = moment().format('DD/MM/YYYY');
+      this.resetFormulario();  // Restablece el formulario cuando se abre
+      this.nuevoCurso.fecha_registro = moment().format('DD/MM/YYYY');  // Usa moment.js para la fecha actual
       this.nuevoCurso.completado = false;  // Estado por defecto como "false"
+      this.nuevoCurso.img = '/src/assets/course.jpg';
+      
+      // Reinicia la validación del formulario para evitar que aparezcan los errores antes de tiempo
+      this.$nextTick(() => {
+        this.$refs.form.resetValidation();  // Asegúrate de que la validación esté reseteada al abrir el modal
+      });
     },
     
     cerrarModal() {
