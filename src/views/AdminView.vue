@@ -1,7 +1,6 @@
 <template>
   <div>
     <h1>Administración</h1>
-    <!-- Botón para agregar curso -->
     <v-row justify="center">
       <v-btn color="primary" class="mb-6 mt-4" @click="abrirModal">Agregar Curso</v-btn>
     </v-row>
@@ -39,27 +38,27 @@
           </tbody>
         </template>
       </v-simple-table>
-      <!-- Dialogo de confirmación para eliminar curso -->
+
       <v-dialog v-model="dialogConfirmDelete" max-width="600">
         <v-card max-height="600px">
           <v-card-title class="d-flex justify-center">
             <span class="text-h6">¿Estás seguro de que deseas eliminar este curso?</span>
           </v-card-title>
           
-          <v-card-actions class="d-flex justify-center"> <!-- Centra los botones -->
-            <!-- Botón Cancelar (Verde) -->
+          <v-card-actions class="d-flex justify-center"> 
+            
             <v-btn color="green darken-1" class="white--text" @click="cancelarEliminar">
               Cancelar
             </v-btn>
 
-            <!-- Botón Eliminar (Rojo) -->
+           
             <v-btn color="red darken-1" class="white--text mb-6 mt-6"  @click="eliminarCursoConfirmado">
               Eliminar
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-    <!-- Modal para agregar un curso -->
+    
     <v-dialog v-model="dialog" max-width="600px">
       <v-card>
         <v-card-title>
@@ -67,7 +66,7 @@
         </v-card-title>
 
         <v-card-text>
-          <!-- Formulario vacío para agregar un nuevo curso -->
+        
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-text-field
               v-model="nuevoCurso.nombre"
@@ -77,14 +76,12 @@
               required
             ></v-text-field>
 
-            <v-file-input
+            <v-text-field
               v-model="nuevoCurso.img"
               label="Imagen del curso"
-              accept="image/*"
-              prepend-icon="mdi-camera"
               required
               readonly
-            ></v-file-input>
+            ></v-text-field>
 
             <v-text-field
               v-model="nuevoCurso.cupos"
@@ -140,17 +137,15 @@
         </v-card-text>
 
         <v-card-actions class="d-flex justify-center">
-          <!-- Botón verde "Agregar" -->
+          
           <v-btn color="green darken-1" class="white--text mb-6" @click="agregarCurso">
             Agregar
           </v-btn>
 
-          <!-- Botón naranjo "Limpiar formulario" -->
           <v-btn color="orange darken-1" class="white--text mb-6" @click="resetFormulario">
             Limpiar formulario
           </v-btn>
 
-          <!-- Botón rojo "Cancelar" -->
           <v-btn color="red" class="white--text mb-6" @click="cerrarModal">
             Cancelar
           </v-btn>
@@ -174,11 +169,11 @@ export default {
     },
     data() {
     return {
-      dialog: false,  // Controla si el modal está abierto o cerrado
-      valid: false,   // Controla la validación del formulario
-      dialogConfirmDelete: false,  // Controla el diálogo de confirmación
+      dialog: false,  
+      valid: false,   
+      dialogConfirmDelete: false,  
       cursoIdParaEliminar: null,
-      // Reglas de validación para los campos
+      // validación para los campos
       nombreRules: [(v) => !!v || 'El nombre es requerido', (v) => v.length <= 40 || 'Máximo 40 caracteres'],
       cuposRules: [(v) => !!v || 'Los cupos son requeridos'],
       inscritosRules: [(v) => !!v || 'Los inscritos son requeridos'],
@@ -188,14 +183,14 @@ export default {
       completadoRules: [(v) => !!v || 'El estado es requerido'],
       costoRules: [(v) => !!v || 'El costo es requerido'],
       numericRule: (v) => /^\d+$/.test(v) || 'Debe ser un valor numérico',
-      nuevoCurso: {  // Objeto para un nuevo curso
+      nuevoCurso: {  
         nombre: '',
-        img: '',
+        img: 'https://images.ctfassets.net/denf86kkcx7r/4IPlg4Qazd4sFRuCUHIJ1T/f6c71da7eec727babcd554d843a528b8/gatocomuneuropeo-97',
         cupos: '',
         inscritos: '',
         duracion: '',
         fecha_registro: '',
-        completado: 'false',  // Valor por defecto "false"
+        completado: 'false',  
         costo: '',
         descripcion: ''
       }
@@ -209,31 +204,29 @@ export default {
     
     abrirModal() {
       this.dialog = true;
-      this.resetFormulario();  // Restablece el formulario cuando se abre
-      this.nuevoCurso.fecha_registro = moment().format('DD/MM/YYYY');  // Usa moment.js para la fecha actual
-      this.nuevoCurso.completado = false;  // Estado por defecto como "false"
-      this.nuevoCurso.img = '/src/assets/course.jpg';
+      this.resetFormulario();  
+      this.nuevoCurso.fecha_registro = moment().format('DD/MM/YYYY');  
+      this.nuevoCurso.completado = false;  
+      this.nuevoCurso.img = 'https://images.ctfassets.net/denf86kkcx7r/4IPlg4Qazd4sFRuCUHIJ1T/f6c71da7eec727babcd554d843a528b8/gatocomuneuropeo-97';
       
-      // Reinicia la validación del formulario para evitar que aparezcan los errores antes de tiempo
       this.$nextTick(() => {
-        this.$refs.form.resetValidation();  // Asegúrate de que la validación esté reseteada al abrir el modal
+        this.$refs.form.resetValidation();  
       });
     },
     
     cerrarModal() {
       this.dialog = false;
-      this.resetFormulario();  // Resetea el formulario cuando se cierra
+      this.resetFormulario();  // reset form
     },
     
     resetFormulario() {
-      // Limpia el formulario y asigna la fecha actual con moment
       this.nuevoCurso = {
         nombre: '',
-        img: '',
+        img: 'https://images.ctfassets.net/denf86kkcx7r/4IPlg4Qazd4sFRuCUHIJ1T/f6c71da7eec727babcd554d843a528b8/gatocomuneuropeo-97',
         cupos: '',
         inscritos: '',
         duracion: '',
-        fecha_registro: moment().format('DD/MM/YYYY'),  // Fecha actual por defecto usando moment
+        fecha_registro: moment().format('DD/MM/YYYY'), 
         completado: false,
         costo: '',
         descripcion: ''
@@ -242,42 +235,40 @@ export default {
     
     agregarCurso() {
       if (this.$refs.form.validate()) {
-        // Convertir cupos, inscritos y costo a números antes de enviarlos a Vuex
         const curso = {
           ...this.nuevoCurso,
           cupos: Number(this.nuevoCurso.cupos),
           inscritos: Number(this.nuevoCurso.inscritos),
           costo: Number(this.nuevoCurso.costo),
-          completado: Boolean(this.nuevoCurso.completado)  // Asegurarse de que 'completado' sea booleano
+          completado: Boolean(this.nuevoCurso.completado)  
         };
-        // Llama a la acción de Vuex para agregar el curso
         this.$store.dispatch('agregarCurso', curso);
-        this.cerrarModal();  // Cierra el modal después de agregar
+        this.cerrarModal();  // se cierra el modal después de agregar
       }
     },
     
     formatDate(date) {
-      if (!date) return '';  // Si no hay fecha, devolver una cadena vacía
-      const formattedDate = moment(date, 'DD/MM/YYYY', true);  // Intentar formatear la fecha en 'DD/MM/YYYY'
+      if (!date) return '';  
+      const formattedDate = moment(date, 'DD/MM/YYYY', true);  
       if (formattedDate.isValid()) {
-        return formattedDate.format('DD/MM/YYYY');  // Si la fecha es válida, formatearla en el formato deseado
+        return formattedDate.format('DD/MM/YYYY');  
       } else {
-        return 'Fecha inválida';  // Si no es válida, devuelve un mensaje o valor predeterminado
+        return 'Fecha inválida'; 
       }
     },
 
     confirmarEliminar(cursoId) {
       this.cursoIdParaEliminar = cursoId;
-      this.dialogConfirmDelete = true;  // Abre el diálogo de confirmación
+      this.dialogConfirmDelete = true;  
     },
     
     cancelarEliminar() {
-      this.dialogConfirmDelete = false;  // Cierra el diálogo sin eliminar
+      this.dialogConfirmDelete = false;  
     },
 
     eliminarCursoConfirmado() {
-      this.$store.dispatch('eliminarCurso', this.cursoIdParaEliminar);  // Corregido para usar dispatch
-      this.dialogConfirmDelete = false;  // Cierra el diálogo después de eliminar
+      this.$store.dispatch('eliminarCurso', this.cursoIdParaEliminar);  
+      this.dialogConfirmDelete = false;  
     }
   },
     // watch: {},

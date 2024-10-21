@@ -4,11 +4,9 @@
         <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
   
         <v-toolbar-title>Cursos AlfaWeb</v-toolbar-title>
-  
-        <!-- Separador para empujar los íconos a la derecha -->
+
         <v-spacer></v-spacer>
   
-        <!-- Íconos de Home y Administracion a la derecha -->
         <v-btn icon @click="redirectTo('home')">
           <v-icon color="white">mdi-home</v-icon>
         </v-btn>
@@ -20,7 +18,6 @@
       <v-navigation-drawer v-model="drawer" absolute temporary>
         <v-list nav dense>
           <v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
-            <!-- Generar elementos del menú en la hamburguesa -->
             <v-list-item v-for="route in routes" :key="route.name" @click="redirectTo(route.name)" :disabled="currentRoute === route.name">
               <v-list-item-icon>
                 <v-icon>{{ route.icon }}</v-icon>
@@ -59,14 +56,14 @@ export default {
     },
     computed: {
         currentRoute() {
-        return this.$route.name; // Obtiene la ruta actual para deshabilitar el botón de la ruta activa
+        return this.$route.name; 
         }
     },
     methods: {
         redirectTo(routeName) {
         if (routeName !== this.currentRoute) {
-            this.$router.push({ name: routeName }); // Navegar a la ruta seleccionada
-            this.drawer = false; // Cerrar el drawer después de la navegación
+            this.$router.push({ name: routeName }); 
+            this.drawer = false; 
         }
         }
     }

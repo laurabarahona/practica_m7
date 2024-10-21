@@ -29,7 +29,6 @@
             required
           ></v-text-field>
 
-          <!-- Campo Inscritos -->
           <v-text-field
             v-model="cursoSeleccionado.inscritos"
             :rules="inscritosRules"
@@ -77,7 +76,6 @@
           ></v-textarea>
 
           <v-card-actions class="d-flex justify-center mb-6">
-            <!-- Botón Editar que se deshabilita si el formulario no es válido -->
             <v-btn
               :disabled="!valid"
               color="error"
@@ -108,26 +106,26 @@ export default {
     // props: {},
     data: function() {
         return {
-          valid: false, // Controla si el formulario es válido
+          valid: false, 
           nombreRules: [(v) => !!v || 'El nombre es requerido'],
           cuposRules: [
             (v) => !!v || 'Los cupos son requeridos',
             (v) => /^\d+$/.test(v) || 'Debe ser un valor numérico'
           ],
           inscritosRules: [
-            (v) => /^\d+$/.test(v) || 'Debe ser un valor numérico', // Validar que sea un número
+            (v) => /^\d+$/.test(v) || 'Debe ser un valor numérico',
             (v) => {
               if (this.cursoSeleccionado.completado === true) {
-                return v === 0 || 'Si el curso está terminado, los inscritos deben ser 0';  // Si terminado, solo 0 es válido
+                return v === 0 || 'Si el curso está terminado, los inscritos deben ser 0';  
               } 
-              return v <= this.cursoSeleccionado.cupos || 'Los inscritos no pueden ser mayores que los cupos'; // Si no está terminado, validar según cupos
+              return v <= this.cursoSeleccionado.cupos || 'Los inscritos no pueden ser mayores que los cupos'; 
             }
           ],
           duracionRules: [(v) => !!v || 'La duración es requerida'],
           fechaRules: [(v) => !!v || 'La fecha es requerida'],
           terminadoOptions: [
-            { text: 'Sí', value: true },  // Opción para marcar como terminado
-            { text: 'No', value: false }  // Opción para marcar como no terminado
+            { text: 'Sí', value: true },  
+            { text: 'No', value: false }  
           ],
           completadoRules: [(v) => !!v || 'El estado es requerido'],
           costoRules: [
@@ -139,8 +137,8 @@ export default {
     computed: {
       ...mapGetters(['allCursos']),
       cursoSeleccionado() {
-        const id = this.$route.params.id;  // Obtener el id de la URL
-        return this.allCursos.find(curso => curso.id === parseInt(id));  // Buscar solo el curso que coincida con el id
+        const id = this.$route.params.id;  
+        return this.allCursos.find(curso => curso.id === parseInt(id));  // busca el curso que coincida con el id
       }
     },
     methods: {
@@ -154,7 +152,6 @@ export default {
             costo: Number(this.cursoSeleccionado.costo)
           };
           
-          // Enviar los datos al store
           this.modificarCurso(cursoActualizado);
           this.$router.push({ name: 'admin' });
         }
@@ -166,7 +163,7 @@ export default {
     watch: {
       'cursoSeleccionado.completado': function(newValue) {
         if (newValue === true) {
-          this.cursoSeleccionado.inscritos = 0;  // Si el curso está terminado, establecer inscritos a 0
+          this.cursoSeleccionado.inscritos = 0;  //condicion
         }
       }
     }
